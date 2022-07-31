@@ -31,11 +31,11 @@ const RoomSchema = new mongoose.Schema(
             //default: null,
 
         },
-        available: {
-            type: Boolean,
-            default: true,
-            //required: true,
+        situation:{
+            type:String,
+            default: "disponible",
         },
+
 
 
 

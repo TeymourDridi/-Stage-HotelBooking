@@ -4,7 +4,8 @@ const { createError } = require("../utils/error.js");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../utils/email");
 const Token = require("../models/token");
-const { User,validate } = require("../models/User");
+const User = require("../models/User.js");
+const {validate} = require("../models/User.js");
 
 module.exports.register = async (req, res, next) => {
   try {

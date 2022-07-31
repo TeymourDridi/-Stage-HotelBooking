@@ -2,7 +2,7 @@ const Hotel = require("../models/Hotel.js");
 const Room = require("../models/Room.js");
 
 module.exports.createHotel = async (req, res, next) => {
-  const newHotel = new Hotel();
+  const newHotel = new Hotel({name :req.body.name,city:req.body.city,email:req.body.email,address:req.body.address} );
   //console.log(req.body.rooms);
 
   try {
@@ -15,7 +15,7 @@ module.exports.createHotel = async (req, res, next) => {
         newRoom.idHotel= newHotel._id;
         newRoom.title= req.body.rooms[n].title;
         newRoom.price= req.body.rooms[n].price;
-        newRoom.maxPeople= n.maxPeople;
+        newRoom.maxPeople= req.body.rooms[n].maxPeople;
         const savedRoom = await newRoom.save();
         newHotel.rooms.push(savedRoom);
 

@@ -1,4 +1,5 @@
 const mongoose  = require("mongoose");
+const { Schema } = mongoose;
 const Joi  = require("joi");
 const UserSchema = new mongoose.Schema(
   {
@@ -6,6 +7,16 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+    },
+      name: {
+      type: String,
+      //required: true,
+
+    },
+      lastname: {
+      type: String,
+      //required: true,
+
     },
     email: {
       type: String,
@@ -31,7 +42,11 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    isAdmin: {
+      rooms: [{ type: Schema.Types.ObjectId, ref: "Hotel" }],
+
+      factures: [{ type: Schema.Types.ObjectId, ref: "Facture" }],
+
+      isAdmin: {
       type: Boolean,
       default: false,
     },
@@ -45,9 +60,9 @@ const UserSchema = new mongoose.Schema(
 
 //export default mongoose.model("User", UserSchema);
 
-const User =  mongoose.model("User", UserSchema);
+module.exports =  mongoose.model("User", UserSchema);
 
-const validate = (user) => {
+module.exports.validate = (user) => {
     const schema = Joi.object({
         username: Joi.string().min(3).max(255).required(),
         email: Joi.string().email().required(),
@@ -57,7 +72,7 @@ const validate = (user) => {
     return schema.validate(user);
 };
 
-module.exports = {
-    User,
+/*module.exports = {
+
     validate,
-};
+};*/

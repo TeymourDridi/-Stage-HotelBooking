@@ -1,6 +1,9 @@
 const Room = require("../models/Room.js");
+const User = require("../models/User.js");
 const Hotel = require("../models/Hotel.js");
+const Facture = require("../models/Facture.js");
 const { createError } = require("../utils/error.js");
+const {sendEmailHotel} = require("../utils/email");
 
 module.exports.createRoom = async (req, res, next) => {
   const hotelId = req.params.hotelid;
@@ -33,25 +36,118 @@ module.exports.updateRoom = async (req, res, next) => {
     next(err);
   }
 };
-module.exports.updateRoomAvailability = async (req, res, next) => {
+module.exports.confirmRoom = async (req, res, next) => {
   try {
+    if(req.params.response==="oui"){
+      const facture = await Facture.findById(req.params.factureId);
+      await Facture.updateOne(
+          {"_id": req.params.factureId},
+      {
+        $set: {
+          situation: "confirmed"
+        }
 
-    const upHotel = await Hotel.findById(req.params.hotelid);
+      }
+      );
+      res.status(200).json("confirmed");
+    }else{
 
-    const room =await Room.findOne({title : req.body.title,idHotel :req.params.hotelid,available: true})
-
-req.body.available=false;
-    if(room===null){
-      res.status(301).json("no Room Available.");
-    }else {
-      await Room.updateOne(
-          {"_id": room._id},
+      await Facture.updateOne(
+          {"_id": req.params.factureId},
           {
-            $set: req.body,
+            $set: {
+              situation: "deny"
+            }
 
           }
       );
-      res.status(200).json("Room Reserved.");
+      res.status(201).json("deny");
+    }
+  } catch (err) {
+
+  }
+};
+
+module.exports.updateRoomAvailability = async (req, res, next) => {
+  try {
+
+    const hotel = await Hotel.findById(req.params.hotelid);
+    const user = await User.findById(req.params.userId);
+
+    let rooms=[];
+    let rooms2=[];
+    let nrooms=0;
+    let oneNight=0;
+
+    for(let k=0 ;k<req.body.title.length;k++) {
+      rooms.push(await Room.find({title: req.body.title[k], idHotel: req.params.hotelid, situation: "disponible"}).limit(req.body.number[k]));
+      nrooms+=req.body.number[k];
+    }
+
+
+
+
+    if(nrooms!==rooms.length+1){
+
+      res.status(200).json("no Room Available");
+    }else {
+
+
+      rooms.map(async (m) => {
+            console.log(m.length);
+            for (let k = 0; k < m.length; k++) {
+              oneNight += m[k].price;
+              rooms2.push(m[k]);
+              await Room.updateOne(
+                  {"_id": m[k]._id},
+                  {
+                    $set: {
+                      situation: "en attente",
+                      checkIn: req.body.checkIn,
+                      checkOut: req.body.checkOut,
+
+                    }
+
+                  }
+              );
+            }
+          }
+      )
+
+      const t2 = new Date(req.body.checkOut).getTime();
+      const t1 = new Date(req.body.checkIn).getTime();
+      const Days = (((t2 - t1) / (1000 * 60 * 60 * 24)) % 7)
+
+      const facture = new Facture({
+        userId: user._id,
+        hotelId: hotel._id,
+        jours: Days,
+        price: oneNight * Days,
+        rooms: rooms2
+      })
+      await facture.save();
+
+      const message1 = `${process.env.BASE_URL}/rooms/oui/${facture._id}`;
+      const message2 = `${process.env.BASE_URL}/rooms/non/${facture._id}`;
+      console.log(hotel.email);
+      await sendEmailHotel(hotel.email, "Reservation", message1, message2, facture, rooms2, user);
+
+
+
+      console.log(user);
+      await User.updateOne(
+          {"_id": req.params.userId},
+          {
+
+            $push: {
+              "hotels": rooms2.idHotel,
+              "factures": facture._id
+            }
+          },
+      );
+
+      res.status(200).json("Room Reserved");
+
     }
   } catch (err) {
     console.log(err);
@@ -69,7 +165,7 @@ module.exports.deleteRoom = async (req, res, next) => {
     } catch (err) {
       next(err);
     }
-    res.status(200).json("Room has been deleted.");
+    res.status(200).json("Room has been deleted");
   } catch (err) {
     next(err);
   }
