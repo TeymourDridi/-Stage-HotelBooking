@@ -1,6 +1,6 @@
 const Hotel = require("../models/Hotel.js");
 const Room = require("../models/Room.js");
-
+const multer = require('multer');
 module.exports.createHotel = async (req, res, next) => {
   const newHotel = new Hotel({name :req.body.name,city:req.body.city,email:req.body.email,address:req.body.address} );
   //console.log(req.body.rooms);
@@ -22,10 +22,41 @@ module.exports.createHotel = async (req, res, next) => {
 
       }
     }
+    const storage = multer.diskStorage({
+      destination: (req, file, cb) => {
+        cb(null, 'public')
+      },
+      filename: (req, file, cb) => {
+        const Dd = Date.now();
+        newHotel.photos.push(Dd + file.originalname);
+
+        cb(null, Dd + file.originalname)
+
+      }
+    });
+    const multerFilter = (req, file, cb) => {
+      if (file.mimetype.startsWith("image")) {
+        cb(null, true);
+      } else {
+        cb("Please upload only images.", false);
+      }
+    };
+    const upload = multer({
+      storage: storage,
+      fileFilter: multerFilter
+    });
+    const uploadFiles = upload.array("images", 15); // limit to 15 images
+
+    uploadFiles(req, res, async (err) => {
+      if (err) {
+        return res.status(500).json(err)
+      }
+      const savedHotel = await newHotel.save();
+      return res.status(200).json(newHotel)
+    })
 
 
-    const savedHotel = await newHotel.save();
-    res.status(200).json(savedHotel);
+
   } catch (err) {
     next(err);
   }
@@ -70,6 +101,7 @@ module.exports.getHotels = async (req, res, next) => {
     next(err);
   }
 };
+
 /*export const countByCity = async (req, res, next) => {
   const cities = req.query.cities.split(",");
   try {
