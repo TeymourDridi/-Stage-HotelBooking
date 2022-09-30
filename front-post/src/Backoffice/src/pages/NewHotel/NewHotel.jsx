@@ -101,7 +101,7 @@ console.log(add)
               })
               .catch((e) => {
                   toast.current.show({severity: 'error', summary: 'Error', detail: e.response.data});
-                  if(e.response.status===403){
+                  if(e.response.status===403 || e.response.status===401){
                       props.navigate('/auth/login')
                   }
               })
@@ -151,7 +151,7 @@ console.log(add)
               })
               .catch((e) => {
 
-                  if(e.response.status===403){
+                  if(e.response.status===403 || e.response.status===401){
                       props.navigate('/auth/login')
                   }
                   toast.current.show({severity: 'error', summary: 'Error', detail: e.response.data});

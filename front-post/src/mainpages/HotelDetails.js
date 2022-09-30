@@ -87,7 +87,8 @@ const HotelDetails = (props) => {
             })
             .catch((e) => {
                 console.log(e);
-                if(e.response.status===403){
+                if(e.response.status===403 || e.response.status===401){
+                    props.toast.current.show({severity: 'warn', summary: 'Connectez Vous', detail: "Vous n'etes pas autorisez"});
                     props.navigate('/auth/login')
                 }
                 console.log("response");
@@ -133,7 +134,7 @@ function submit(){
         .catch((e) => {
             console.log(e);
             toast.current.show({severity: 'error', summary: 'Error', detail: e.response.data});
-            if(e.response.status===403){
+            if(e.response.status===403 || e.response.status===401){
                 props.toast.current.show({severity: 'warn', summary: 'Connectez Vous', detail: "Vous n'etes pas autorisez"});
                 props.navigate('/auth/login')
             }
@@ -161,7 +162,8 @@ function price(){
     let t2=new Date(checkout)
     let jours=(((t2.getTime() - t1.getTime()) / (1000 * 60 * 60 * 24)) % 7);
     p=p*jours;
-    p=Math.round(p)
+    p=Math.round(p);
+    testonFactureexistance();
     return p
 }
 

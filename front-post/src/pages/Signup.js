@@ -143,13 +143,12 @@ function confirm(e){
                                             <div className="form-outline col-5 mb-4">
                                                 <label className="form-label" htmlFor="form2Example11">Confirmer
                                                     Mot De Passe</label>
-                                                {matchPwd+"sdsd"}
                                                 <input type="password" id="form2Example11" className="form-control"
                                                        placeholder="******" {...register("confirmPwd", {required: true})} onChange={(e)=>confirm(e.target.value)}/>
 
                                                 {!matchPwd &&
                                                 <div className="d-flex justify-content-center alert alert-danger" style={{opacity:'0.8',padding:'8px',color:'red'}} role="alert">
-                                                    the two passwords must match !
+                                                    La Confirmation ne correspond pas au Mot de passe!
                                                 </div>}
                                             </div>
                                         </div>

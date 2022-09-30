@@ -16,7 +16,7 @@ const router = express.Router();
 router.delete("/:id", verifyUser, deleteFacture);
 
 //GET
-router.get("/stats",getReservationByHotel);
+router.get("/stats",verifyAdmin,getReservationByHotel);
 
 router.get("/:id", verifyUser, getFacture);
 

@@ -27,7 +27,7 @@ export default function HotelList(props) {
           })
           .catch((e) => {
               console.log(e);
-              if(e.response.status===403){
+              if(e.response.status===403 || e.response.status===401){
                   props.navigate('/auth/login')
               }
               console.log("response");
