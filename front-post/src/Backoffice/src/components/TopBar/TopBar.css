@@ -1,0 +1,56 @@
+.topbar{
+    width: 100%;
+    height: 70px;
+    background-color: white;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+.topbarWrapper{
+    height: 100%;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.topbarImage{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.topRight{
+    display: flex;
+    align-items: center;
+}
+
+
+.TopbarNotification{
+    position: relative;
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+.TopbarSettings{
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+.notifBadge{
+    position: absolute;
+    top: -2px;
+    left: 15px;
+    color: #FFFFFF;
+    font-size: 10px;
+    font-weight: bold;
+    background-color: red;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

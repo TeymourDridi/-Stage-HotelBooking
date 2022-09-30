@@ -1,0 +1,230 @@
+
+body{
+
+}
+
+.homepage-titles{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.homepage-titles h1{
+  margin: 40px 0;
+}
+
+.HomeBody{
+  margin: 75px 0;
+}
+
+.HomeBodyButtons{
+  margin: 35px 0;
+  display: flex;
+  justify-content: space-around;
+}
+
+.header-wrapper{
+  background-color: #DCFFFE;
+  padding: 10px;
+  margin: 20px 0;
+
+}
+
+.header-wrapper .navbar{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header{
+  width: 95%;
+  margin: auto;
+}
+
+.site-logo img{
+  width: 100px;
+  height: 100px;
+  border-radius:10px;
+}
+
+.NavbarMenu ul{
+  list-style: none;
+
+}
+
+.NavbarMenu li{
+  display: inline;
+  padding: 10px 20px;
+}
+
+.NavbarMenu a{
+  text-decoration: none;
+}
+
+.LogoTitle{
+
+}
+
+.formUnit{
+  display: flex;
+  justify-content: space-around;
+}
+
+footer{
+  width: 95%;
+}
+
+footer a{
+  text-decoration: none;
+}
+
+.footer-Block{
+  display: flex;
+  justify-content: space-around;
+}
+
+.footerLogo{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footerLogo img{
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.copyright-area
+{
+  display: flex;
+  justify-content: center;
+}
+
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+body{
+
+}
+
+.homepage-titles{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.homepage-titles h1{
+  margin: 40px 0;
+}
+
+.HomeBody{
+  margin: 75px 0;
+}
+
+.HomeBodyButtons{
+  margin: 35px 0;
+  display: flex;
+  justify-content: space-around;
+}
+
+.header-wrapper{
+  background-color: #DCFFFE;
+  padding: 10px;
+  margin: 20px 0;
+
+}
+
+.header-wrapper .navbar{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header{
+  width: 95%;
+  margin: auto;
+}
+
+.site-logo img{
+  width: 100px;
+  height: 100px;
+  border-radius:10px;
+}
+
+.NavbarMenu ul{
+  list-style: none;
+
+}
+
+.NavbarMenu li{
+  display: inline;
+  padding: 10px 20px;
+}
+
+.NavbarMenu a{
+  text-decoration: none;
+}
+
+.LogoTitle{
+
+}
+
+.formUnit{
+  display: flex;
+  justify-content: space-around;
+}
+
+footer{
+  width: 95%;
+}
+
+footer a{
+  text-decoration: none;
+}
+
+.footer-Block{
+  display: flex;
+  justify-content: space-around;
+}
+
+.footerLogo{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footerLogo img{
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.copyright-area
+{
+  display: flex;
+  justify-content: center;
+}
