@@ -38,9 +38,16 @@ const UserSchema = new mongoose.Schema(
       type: String,
      // required: true,
     },
+      gender: {
+      type: String,
+     // required: true,
+    },
     password: {
       type: String,
       required: true,
+    },
+      birthDate: {
+      type: Date,
     },
       rooms: [{ type: Schema.Types.ObjectId, ref: "Hotel" }],
 
@@ -68,6 +75,14 @@ module.exports.validate = (user) => {
         email: Joi.string().email().required(),
         password:Joi.string().min(3).max(255).required(),
         isAdmin : Joi.optional(),
+        name : Joi.optional(),
+        lastname : Joi.optional(),
+        city : Joi.optional(),
+        country : Joi.optional(),
+        phone : Joi.optional(),
+        img : Joi.optional(),
+        gender : Joi.optional(),
+        birthDate : Joi.optional(),
     });
     return schema.validate(user);
 };

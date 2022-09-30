@@ -3,6 +3,9 @@ const {
   //countByCity,
   //countByType,
   getHotelPhotos,
+  getSearchHotels,
+  getBestHotels,
+  getFactureExists,
   createHotel,
   deleteHotel,
   getHotel,
@@ -11,7 +14,8 @@ const {
   updateHotel,
 } = require("../controllers/hotel.js");
 const Hotel =require("../models/Hotel.js");
-const {verifyAdmin} = require("../utils/verifyToken.js");
+const {verifyAdmin,verifyUser} = require("../utils/verifyToken.js");
+const {upImagesHotel} = require("../controllers/hotel");
 const router = express.Router();
 
 //CREATE
@@ -23,13 +27,14 @@ router.put("/:id", verifyAdmin, updateHotel);
 router.delete("/:id", verifyAdmin, deleteHotel);
 //GET
 
-router.get("/find/:id", getHotel);
+router.get("/find/:id",verifyUser, getHotel);
 //GET ALL
 
-router.get("/", getHotels);
+router.get("/",verifyUser, getHotels);
+router.get("/facture/:iduser/:idhotel",verifyUser, getFactureExists);
+router.post("/photos/:id",verifyAdmin, upImagesHotel);
+router.get("/best" ,getBestHotels);
+router.get("/search/:name/:price/:city/:rating",verifyUser, getSearchHotels);
 
-/*router.get("/countByCity", countByCity);
-router.get("/countByType", countByType);
-router.get("/room/:id", getHotelRooms);*/
 
 module.exports = router;

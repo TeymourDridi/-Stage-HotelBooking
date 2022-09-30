@@ -44,24 +44,24 @@ module.exports.confirmRoom = async (req, res, next) => {
           {"_id": req.params.factureId},
       {
         $set: {
-          situation: "confirmed"
+          situation: "confirmer"
         }
 
       }
       );
-      res.status(200).json("confirmed");
+      res.status(200).json("confirmer");
     }else{
 
       await Facture.updateOne(
           {"_id": req.params.factureId},
           {
             $set: {
-              situation: "deny"
+              situation: "refuser"
             }
 
           }
       );
-      res.status(201).json("deny");
+      res.status(201).json("refuser");
     }
   } catch (err) {
 
@@ -73,82 +73,155 @@ module.exports.updateRoomAvailability = async (req, res, next) => {
 
     const hotel = await Hotel.findById(req.params.hotelid);
     const user = await User.findById(req.params.userId);
+    const checkin = new Date(req.body.checkIn);
+    const checkinMail =req.body.checkIn;
 
-    let rooms=[];
-    let rooms2=[];
-    let nrooms=0;
-    let oneNight=0;
-
-    for(let k=0 ;k<req.body.title.length;k++) {
-      rooms.push(await Room.find({title: req.body.title[k], idHotel: req.params.hotelid, situation: "disponible"}).limit(req.body.number[k]));
-      nrooms+=req.body.number[k];
+    const checkout = new Date(req.body.checkOut);
+    const checkoutMail = req.body.checkOut;
+    const tawa = new Date();
+    if(checkin<tawa){
+      res.status(406).json("DATE ERRONE");
     }
-
-
-
-
-    if(nrooms!==rooms.length+1){
-
-      res.status(200).json("no Room Available");
+    else if(checkout<checkin){
+      res.status(406).json("DATE ERRONE");
     }else {
+      let nrooms = 0;
+
+      let roomsMap = [];
+      let x = false;
+      for (let roomarrayindex = 0; roomarrayindex < req.body.title.length; roomarrayindex++) {
+        let roomsList = [];
+        roomsList.push(await Room.find({title: req.body.title[roomarrayindex], idHotel: req.params.hotelid}));
+        nrooms = nrooms + req.body.number[roomarrayindex];
+        //console.log(roomsList);
+
+        roomsList.map((rs) => {
+          let numb = 0;
+          rs.map((r) => {
 
 
-      rooms.map(async (m) => {
-            console.log(m.length);
-            for (let k = 0; k < m.length; k++) {
-              oneNight += m[k].price;
-              rooms2.push(m[k]);
+            if (req.body.number[roomarrayindex] > numb) {
+              x = true;
+              const maMap = new Map(r.inout);
+              for (const [key, value] of maMap.entries()) {
+
+
+                let inDate = new Date(`${key}`);
+
+                if ((checkin >= inDate && checkin <= value) || (checkout >= inDate && checkout <= value)) {
+                  x = false;
+                }
+
+              }
+              if (x) {
+                maMap.set(req.body.checkIn, checkout)
+                r.inout = maMap;
+                roomsMap.push(r);
+                numb = numb + 1;
+                //console.log(numb);
+
+              }
+            }
+          });
+        });
+
+
+      }
+
+
+      console.log(roomsMap);
+
+
+      let rooms = [];
+      let rooms2 = [];
+
+      let oneNight = 0;
+
+
+//console.log(roomsMap.length);
+
+      if (nrooms !== roomsMap.length) {
+
+        res.status(404).json("Pas De Chambres Disponible");
+      } else {
+
+
+        roomsMap.map(async (r) => {
+
+              //     for (let k = 0; k < r.length; k++) {
+              //console.log(r._id);
+              if (hotel.discount) {
+                oneNight += r.price - ((r.price * hotel.discount) / 100);
+              } else {
+                oneNight += r.price;
+              }
+              rooms2.push(r);
               await Room.updateOne(
-                  {"_id": m[k]._id},
+                  {"_id": r._id},
                   {
                     $set: {
                       situation: "en attente",
-                      checkIn: req.body.checkIn,
-                      checkOut: req.body.checkOut,
+                      inout: r.inout,
 
                     }
 
                   }
               );
+              // }
             }
-          }
-      )
+        )
 
-      const t2 = new Date(req.body.checkOut).getTime();
-      const t1 = new Date(req.body.checkIn).getTime();
-      const Days = (((t2 - t1) / (1000 * 60 * 60 * 24)) % 7)
+        const t2 = new Date(req.body.checkOut).getTime();
+        const t1 = new Date(req.body.checkIn).getTime();
+        const Days = (((t2 - t1) / (1000 * 60 * 60 * 24)) % 7)
 
-      const facture = new Facture({
-        userId: user._id,
-        hotelId: hotel._id,
-        jours: Days,
-        price: oneNight * Days,
-        rooms: rooms2
-      })
-      await facture.save();
+        const facture = new Facture({
+          userId: user._id,
+          hotelId: hotel._id,
+          hotelName: hotel.name,
+          name: user.name,
+          lastname: user.lastname,
 
-      const message1 = `${process.env.BASE_URL}/rooms/oui/${facture._id}`;
-      const message2 = `${process.env.BASE_URL}/rooms/non/${facture._id}`;
-      console.log(hotel.email);
-      await sendEmailHotel(hotel.email, "Reservation", message1, message2, facture, rooms2, user);
+          jours: Days,
+          price: Math.round(oneNight * Days),
+          rooms: rooms2
+        })
+        await facture.save();
+
+        const message1 = `${process.env.BASE_URL}/rooms/oui/${facture._id}`;
+        const message2 = `${process.env.BASE_URL}/rooms/non/${facture._id}`;
+        // console.log(hotel.email);
+        await sendEmailHotel(hotel.email, "Reservation", message1, message2, facture, req.body.title, user, req.body.number, checkinMail, checkoutMail);
 
 
+        //console.log(user);
+        await User.updateOne(
+            {"_id": req.params.userId},
+            {
 
-      console.log(user);
-      await User.updateOne(
-          {"_id": req.params.userId},
-          {
+              $push: {
+                "hotels": rooms2.idHotel,
+                "factures": facture._id
+              }
+            },
+        );
+        await Hotel.updateOne(
+            {"_id": req.params.hotelid},
+            {
 
-            $push: {
-              "hotels": rooms2.idHotel,
-              "factures": facture._id
-            }
-          },
-      );
+              $push: {
 
-      res.status(200).json("Room Reserved");
+                "factures": facture._id
+              }
+            },
+        );
 
+        res.status(200).json("Room Reserved");
+
+      }
     }
+
+
   } catch (err) {
     console.log(err);
     next(err);

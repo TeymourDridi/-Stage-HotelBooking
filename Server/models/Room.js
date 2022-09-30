@@ -31,15 +31,16 @@ const RoomSchema = new mongoose.Schema(
             //default: null,
 
         },
+        inout:{
+            type:Map,
+            of: { type: Date },
+        },
         situation:{
             type:String,
             default: "disponible",
         },
 
 
-
-
-       //
         // roomNumbers: [{ number: Number, unavailableDates: {type: [Date]}}],
     },
     { timestamps: true }

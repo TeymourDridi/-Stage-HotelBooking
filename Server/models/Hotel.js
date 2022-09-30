@@ -8,6 +8,10 @@ const HotelSchema = new mongoose.Schema({
     city:{
         type: String,
     },
+    description:{
+        type: String,
+    },
+
     email:{
         type: String,
     },
@@ -23,8 +27,22 @@ const HotelSchema = new mongoose.Schema({
         min: 0,
         max: 5,
     },
+    discount: {
+        type: Number,
+        min: 0,
+        max: 100,
+    },
+    additional: {
+        type: Array,
+
+    },
+ minPrice: {
+        type: Number,
+
+    },
 
     rooms: [{ type: Schema.Types.ObjectId, ref: "Room" }],
+    factures: [{ type: Schema.Types.ObjectId, ref: "Facture" }],
 
 
 })

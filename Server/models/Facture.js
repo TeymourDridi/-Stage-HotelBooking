@@ -25,7 +25,11 @@ const FactureSchema = new mongoose.Schema({
     },
     situation:{
         type:String,
-        default:"attente",
+        default:"En Attente",
+    },
+    date:{
+        type:Date,
+        default:new Date(),
     },
 
     rooms: [{ type: Schema.Types.ObjectId, ref: "Room" }],
